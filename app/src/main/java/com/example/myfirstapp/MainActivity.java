@@ -33,4 +33,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LocationActivity.class);
         startActivity(intent);
     }
+
+    public void sensorScreen(View view) {
+        Intent intent = new Intent(this, SensorActivity.class);
+        startActivity(intent);
+    }
 }
