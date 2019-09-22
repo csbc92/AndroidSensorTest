@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,8 +32,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void sensorScreen(View view) {
-        Intent intent = new Intent(this, SensorActivity.class);
+    public void gravitySensorScreen(View view) {
+        Intent intent = new Intent(this, GravitySensorActivity.class);
+        startActivity(intent);
+    }
+
+    public void lightSensorScreen(View view) {
+        Intent intent = new Intent(this, LightSensorActivity.class);
         startActivity(intent);
     }
 }

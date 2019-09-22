@@ -10,7 +10,9 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class SensorActivity extends AppCompatActivity implements SensorEventListener {
+import static android.hardware.SensorManager.SENSOR_DELAY_NORMAL;
+
+public class GravitySensorActivity extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager sensorManager;
     private Sensor sensor;
@@ -18,12 +20,12 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sensor);
+        setContentView(R.layout.activity_gravity_sensor);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
 
-        sensorManager.registerListener(this, sensor, 1000000000);
+        sensorManager.registerListener(this, sensor, SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -36,9 +38,11 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
         TextView gravityY = findViewById(R.id.txtGravityY);
         TextView gravityZ = findViewById(R.id.txtGravityZ);
 
-        gravityX.setText(String.valueOf(x));
-        gravityY.setText(String.valueOf(y));
-        gravityZ.setText(String.valueOf(z));
+        String unit = " m/s2";
+
+        gravityX.setText(x + unit);
+        gravityY.setText(y + unit);
+        gravityZ.setText(z + unit);
     }
 
     @Override
