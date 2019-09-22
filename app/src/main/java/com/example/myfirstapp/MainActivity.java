@@ -41,4 +41,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LightSensorActivity.class);
         startActivity(intent);
     }
+
+    public void proximitySensorScreen(View view) {
+        Intent intent = new Intent(this, ProximitySensor.class);
+        startActivity(intent);
+    }
 }
