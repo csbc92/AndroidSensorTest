@@ -51,4 +51,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ProximitySensor.class);
         startActivity(intent);
     }
+
+    public void activityRecognitionScreen(View view) {
+        Intent intent = new Intent(this, ActivityRecognitionClientActivity.class);
+        startActivity(intent);
+    }
 }

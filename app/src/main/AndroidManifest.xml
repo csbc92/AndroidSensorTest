@@ -3,6 +3,7 @@
     package="com.example.myfirstapp">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:allowBackup="true"
@@ -11,7 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AccelerometerSensorActivity"
+        <activity android:name=".ActivityRecognitionClientActivity"
+                  android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".AccelerometerSensorActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -57,8 +65,19 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
+
+        <!--
+            Because android:exported is set to "false",
+            the service is only available to this app.
+        -->
+        <service
+            android:name=".RecognitionIntentService"
+            android:exported="false"/>
+
+
     </application>
 
 </manifest>
