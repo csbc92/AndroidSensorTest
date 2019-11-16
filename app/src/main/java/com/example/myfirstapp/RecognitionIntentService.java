@@ -3,6 +3,7 @@ package com.example.myfirstapp;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -13,6 +14,9 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -91,52 +95,80 @@ public class RecognitionIntentService extends IntentService {
         DetectedActivity detectedActivity = result.getMostProbableActivity();
         int confidence = detectedActivity.getConfidence();
         StringBuilder sb = new StringBuilder();
+        String type = "";
 
         switch (detectedActivity.getType()) {
             case DetectedActivity.IN_VEHICLE:
                 Log.d(TAG, "IN_VEHICLE: " + confidence);
                 sb.append("IN_VEHICLE: ").append(confidence);
+                type = "IN_VEHICLE";
                 break;
 
             case DetectedActivity.ON_BICYCLE:
                 Log.d(TAG, "ON_BICYCLE: " + confidence);
                 sb.append("ON_BICYCLE: ").append(confidence);
+                type = "ON_BICYCLE";
                 break;
 
             case DetectedActivity.ON_FOOT:
                 Log.d(TAG, "ON_FOOT: " + confidence);
                 sb.append("ON_FOOT: ").append(confidence);
+                type = "ON_FOOT";
                 break;
 
             case DetectedActivity.RUNNING:
                 Log.d(TAG, "RUNNING: " + confidence);
                 sb.append("RUNNING: ").append(confidence);
+                type = "RUNNING";
                 break;
 
             case DetectedActivity.STILL:
                 Log.d(TAG, "STILL: " + confidence);
                 sb.append("STILL: ").append(confidence);
+                type = "STILL";
                 break;
 
             case DetectedActivity.TILTING:
                 Log.d(TAG, "TILTING: " + confidence);
                 sb.append("TILTING: ").append(confidence);
+                type = "TILTING";
                 break;
 
             case DetectedActivity.UNKNOWN:
                 Log.d(TAG, "UNKNOWN: " + confidence);
                 sb.append("UNKNOWN: ").append(confidence);
+                type = "UNKNOWN";
                 break;
 
             case DetectedActivity.WALKING:
                 Log.d(TAG, "WALKING: " + confidence);
                 sb.append("WALKING: ").append(confidence);
+                type = "WALKING";
                 break;
 
         }
 
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
         sb.append(" ").append(format.format(new Date()));
+
+        String toWrite = format.format(new Date()) + "," + type + "," + confidence + "\n";
+
+        try {
+            File root = new File(Environment.getExternalStorageDirectory(), "ActivityRecognition");
+            if (!root.exists()) {
+                root.mkdirs();
+            }
+            File gpxfile = new File(root, "MyData.csv");
+            FileWriter writer = new FileWriter(gpxfile, true);
+            writer.write(toWrite);
+            writer.flush();
+            writer.close();
+
+            System.out.println("Wrote following to file: " + toWrite);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
