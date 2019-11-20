@@ -3,25 +3,21 @@ package com.example.myfirstapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.job.JobInfo;
-import android.app.job.JobInfo.Builder;
-import android.app.job.JobScheduler;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionClient;
-import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -34,12 +30,15 @@ public class ActivityRecognitionClientActivity extends AppCompatActivity {
     private ActivityRecognitionClient client = null;
     private PendingIntent pendingIntent = null;
     private Intent intent = null;
+    private WakeLock wakeLock = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recognition_client);
 
+        TextView txtRecognizedAcivity = findViewById(R.id.txtRecognizedActivity);
+        txtRecognizedAcivity.setMovementMethod(new ScrollingMovementMethod());
 
         this.client = ActivityRecognition.getClient(this.getApplicationContext());
         // Create an Intent for the ActivityRecognitionClient
@@ -59,6 +58,14 @@ public class ActivityRecognitionClientActivity extends AppCompatActivity {
     public void activateAPI(View view) {
         Log.d(TAG, "Activate API button");
 
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        this.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyApp::MyWakelockTag");
+
+        if (!wakeLock.isHeld()) {
+            wakeLock.acquire();
+        }
+
         if (this.pendingIntent == null) {
             Log.d(TAG, "Creating service");
             this.createService();
@@ -67,6 +74,10 @@ public class ActivityRecognitionClientActivity extends AppCompatActivity {
 
     public void deactivateAPI(View view) {
         Log.d(TAG, "Deactivate API button");
+        if (wakeLock.isHeld()) {
+            wakeLock.release();
+        }
+
         if (this.pendingIntent != null) {
             Log.d(TAG, "Removing service");
             client.removeActivityUpdates(this.pendingIntent);
