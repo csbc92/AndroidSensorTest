@@ -2,7 +2,6 @@ package com.example.myfirstapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,6 +52,10 @@ public class ActivityRecognitionClientActivity extends AppCompatActivity {
             }
         };
         this.intent.putExtra("messenger", new Messenger(h));
+
+        // Make the activity scrollable
+        ((TextView)findViewById(R.id.txtRecognizedActivity)).setMovementMethod(new ScrollingMovementMethod());
+
     }
 
     public void activateAPI(View view) {
@@ -70,6 +73,8 @@ public class ActivityRecognitionClientActivity extends AppCompatActivity {
             Log.d(TAG, "Creating service");
             this.createService();
         }
+        findViewById(R.id.activateActivityRecognition).setEnabled(false);
+        findViewById(R.id.activateActivityRecognition2).setEnabled(true);
     }
 
     public void deactivateAPI(View view) {
@@ -81,10 +86,12 @@ public class ActivityRecognitionClientActivity extends AppCompatActivity {
         if (this.pendingIntent != null) {
             Log.d(TAG, "Removing service");
             client.removeActivityUpdates(this.pendingIntent);
-            TextView txtRecognizedAcivity = findViewById(R.id.txtRecognizedActivity);
-            txtRecognizedAcivity.setText("");
+            TextView txtRecognizedActivity = findViewById(R.id.txtRecognizedActivity);
+            txtRecognizedActivity.setText("");
             this.pendingIntent = null;
         }
+        findViewById(R.id.activateActivityRecognition).setEnabled(true);
+        findViewById(R.id.activateActivityRecognition2).setEnabled(false);
     }
 
     private void createService() {
@@ -94,7 +101,7 @@ public class ActivityRecognitionClientActivity extends AppCompatActivity {
         this.pendingIntent = PendingIntent.getService(this, this.ACTIVITY_RECOGNITION_CLIENT_REQUEST, this.intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Register the Intent to be called whenever there is changes in the Activity (Still, Walking, etc) of the mobile phone
-        Task longRunning = client.requestActivityUpdates(0, this.pendingIntent);
+        Task longRunning = client.requestActivityUpdates(10*1000, this.pendingIntent);
 
         longRunning.addOnSuccessListener(new OnSuccessListener() {
             @Override
